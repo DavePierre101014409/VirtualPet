@@ -62,6 +62,7 @@ const char * isHungry()
 //--------------FUNCTIONS------------------------------
 
 //DISPLAYS A COUNTDOWN TO START THE GAME
+//TODO: finish during rockets game
 void showStartSequence() {
 
   lcd.clear();                  //clear the screen

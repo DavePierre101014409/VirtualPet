@@ -17,6 +17,7 @@
 */
 
 #include <LiquidCrystal.h>            //the liquid crystal library contains commands for printing to the display
+#include "Pet.h"
 
 LiquidCrystal lcd(13, 12, 11, 10, 9, 8);     // tell the RedBoard what pins are connected to the display
 
@@ -29,7 +30,8 @@ long startTime = 0;                   //used to measure time that has passed for
 int roundNumber = 0;                        //keeps track of the roundNumber so that it can be displayed at the end of the game
 const int arraySize = 3;
 
-const char* options[arraySize] = {"Display Your Pet", "Feed your Pet", "Play with the Pet"};
+
+const char* options[arraySize] = {"Display Your Pet", "Feed your Pet", "Play Time"};
 
 // the start value in the sequence array must have a value that could never be an index of an array
 // or at least a value outside the range of 0 to the size of the words array - 1; in this case, it can't be between 0 to 24
@@ -46,6 +48,9 @@ void setup() {
 }
 
 void loop() {
+    Pet pet = Pet("DAVE","DAVE", 1, 5);
+    lcd.print(pet.getName());
+    delay(8000);
     int result = get_Menu_Options();
     lcd.clear();
     lcd.print("results are in ");
@@ -151,6 +156,40 @@ void feedOption(){
 
 }
 
+void showPetDisplays(Pet &aPet){
+
+
+
+  lcd.clear();
+  lcd.print("Your pet's Name is ");
+  lcd.setCursor(1,1);
+  lcd.print(aPet.getName());
+  delay(2000);
+
+  
+  lcd.clear();
+  lcd.print("Your pet age is");
+  lcd.setCursor(1,1);
+  lcd.print(aPet.getAge() +" years old");
+  delay(5000);
+
+
+  lcd.clear();
+  lcd.print("Your pet weights");
+  lcd.setCursor(1,1);
+  lcd.print(pet.getWeight()+ " pounds");
+  delay(5000);
+
+
+
+  lcd.clear();
+  lcd.print("Your pet looks like the following");
+  lcd.setCursor(1,1);
+  lcd.print(pet.getImage());
+  delay(5000);
+
+}
+
 
 //--------------FUNCTIONS------------------------------
 
@@ -160,101 +199,11 @@ void showStartSequence() {
   lcd.clear();                  //clear the screen
 
   lcd.setCursor(0, 0);          //move the cursor to the top left corner
-  lcd.print("Category:");       //print "Category:"
+  lcd.print("Welcome to Virtual ");       //print "Welcome to Virtual"
 
   lcd.setCursor(0, 1);          //move the cursor to the bottom left corner
-  lcd.print("Animals");         //print "Animals:"
+  lcd.print("Pet World");         //print "Pet World"
 
   delay(2000);                  //Wait 2 seconds
 
-  lcd.clear();                  //clear the screen
-  lcd.print("Get ready!");      //print "Get ready!"
-  delay(1000);                  //wait 1 second
-
-  lcd.clear();                  //clear the screen
-  lcd.print("3");               //print "3"
-  delay(1000);                  //wait 1 second
-
-  lcd.clear();                  //clear the screen
-  lcd.print("2");               //print "3"
-  delay(1000);                  //wait 1 second
-
-  lcd.clear();                  //clear the screen
-  lcd.print("1");               //print "3"
-  delay(1000);                  //wait 1 second
-}
-
-//GENERATES A RANDOM ORDER FOR THE WORDS TO BE DISPLAYED
-void generateRandomOrder() {
-
-  randomSeed(analogRead(0));            //reset the random seed (Arduino needs this to generate truly random numbers
-
-  for (int i = 0; i < arraySize; i++) {        //do this until all 25 positions are filled
-
-    int currentNumber = 0;              //variable to hold the current number
-    boolean match = false;              //does the currentNumber match any of the previous numbers?
-
-    //generate random numbers until you've generated one that doesn't match any of the other numbers in the array
-    do {
-      currentNumber = random(0, arraySize);            //generate a random number from 0 to 24
-      match = false;                            //we haven't checked for matches yet, so start by assuming that it doesn't match
-      for (int i = 0; i < arraySize; i++) {            //for all 25 numbers in the array
-        if (currentNumber == sequence[i]) {     //does the currentNumber match any of the numbers?
-          match = true;                         //if so, set the match variable to true
-        }
-      }
-    } while (match == true);                    //if the match variable is true, generate another random number and try again
-    sequence[i] = currentNumber;                //if the match variable is false (the new number is unique) then add it to the sequence
-  }
-}
-
-//GAME OVER
-void gameOver() {
-  lcd.clear();                    //clear the screen
-
-  lcd.setCursor(0, 0);            //move the cursor the top left corner
-  lcd.print("Game Over");         //print "Game Over"
-
-  lcd.setCursor(0, 1);            //move to the bottom row
-  lcd.print("Score: ");           //print a label for the score
-  lcd.print(roundNumber);         //print the score (the round number is the same as the score)
-
-  //play the losing fog horn
-  tone(buzzerPin, 130, 250);      //E6
-  delay(275);
-  tone(buzzerPin, 73, 250);       //G6
-  delay(275);
-  tone(buzzerPin, 65, 150);       //E7
-  delay(175);
-  tone(buzzerPin, 98, 500);       //C7
-  delay(500);
-
-  while (true) {}                 //get stuck in this loop forever
-}
-
-//WINNER
-void winner() {
-  lcd.clear();                    //clear the screen
-
-  lcd.setCursor(7, 0);            //move the cursor to the top center of the screen
-  lcd.print("YOU");               //print "You"
-
-  lcd.setCursor(7, 1);            //move the cursor to the bottom center of the screen
-  lcd.print("WIN!");              //print "WIN!"
-
-  //play the 1Up noise
-  tone(buzzerPin, 1318, 150);     //E6
-  delay(175);
-  tone(buzzerPin, 1567, 150);     //G6
-  delay(175);
-  tone(buzzerPin, 2637, 150);     //E7
-  delay(175);
-  tone(buzzerPin, 2093, 150);     //C7
-  delay(175);
-  tone(buzzerPin, 2349, 150);     //D7
-  delay(175);
-  tone(buzzerPin, 3135, 500);     //G7
-  delay(500);
-
-  while (true) {}                 //get stuck in this loop forever
 }

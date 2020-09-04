@@ -2,10 +2,9 @@
   Pet.cpp - Library for flashing Morse code.
 */
 
-#include "Arduino.h"
 #include "Pet.h"
 
- Pet(const char * name,const char * image, int age, int weight)
+Pet::Pet(const char * name,const char * image, int age, int weight)
 {
  _name = name;
  _image = image;
@@ -19,14 +18,31 @@ void Pet::feedMe()
 {
     //add text to make chop noise
     _weight +=1;
-    hungry = false;
+    _isHungry = false;
+}
+
+const char * Pet::getName()
+{
+  return _name;
+}
+
+const char * Pet::getImage()
+{
+  return _image;
+}
+
+int Pet::getAge()
+{
+  return _age;
+}
+
+int Pet::getWeight()
+{
+  return _weight;
 }
 
 
-void Pet::dash()
+bool Pet::isHungry()
 {
-  digitalWrite(_pin, HIGH);
-  delay(1000);
-  digitalWrite(_pin, LOW);
-  delay(250);
+  return _isHungry;
 }

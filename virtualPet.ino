@@ -48,7 +48,6 @@ void setup() {
 }
 
 void loop() {
-    Pet pet = Pet("DAVE","DAVE", 1, 5);
     lcd.print(pet.getName());
     delay(8000);
     int result = get_Menu_Options();
@@ -69,7 +68,7 @@ void loop() {
         feedPet();
         break;
     case CUDDLE:
-        cuddleWithPet();
+        PlayWithPet();
         break;
     
     default:
@@ -91,10 +90,10 @@ void feedPet()
   lcd.print("Feeding Pet");
 }
 
-void cuddleWithPet()
+void PlayWithPet()
 {
   lcd.clear();
-  lcd.print("Cuddle with Pet");
+  lcd.print("Playing");
 }
 
 
@@ -146,47 +145,92 @@ int get_Menu_Options()
  return optionIndex;
 }
 
+void feedOption()
+{
+  const char * foodOptions[] = {"Chicken","Apple","Carrot"};
+  const int numberOfFoodOption = 3;
+  bool isButtonPressed = false;
+  int optionIndex = 0;
+  lcd.clear();   //clear the screen
+  lcd.print("Pick the food");   //Display Choose one of options then delay for 2 seconds 
+  lcd.setCursor(0, 1);    
+  lcd.print("to feed your pet");
+  int i =0;
+  int userChoice;
+  delay(2000);
+  while (!isButtonPressed){  
+    
+    startTime = millis();  //record the time that this option started
+    while(millis() - startTime < timeLimit){ 
+      lcd.clear();  //clear screen
+      lcd.print("Option "); // write in the lcd screen option number
+      lcd.print(i+1);
+      lcd.setCursor(0, 1); 
+      lcd.print(foodOptions[i]);
+      int roundedTime = round((timeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
+      lcd.setCursor(14, 1);                                                 //set the cursor in the lower right corner of the screen
+      lcd.print("  ");
+      lcd.setCursor(14, 1);   //set the cursor in the lower right corner of the screen
+      lcd.print(roundedTime); //print the time left in the time limit
+      delay(1000);
+      
+      if (digitalRead(buttonPin) == LOW) {
+        isButtonPressed = true;
+        tone(buzzerPin, 272, 10);                   //emit a short beep when the button is pressed
+        lcd.clear();
+        lcd.print("You Selected");
+        lcd.setCursor(0, 1); 
+        lcd.print(foodOptions[i]);
+        delay(3000); 
+      }
  
+  
+    }
 
-void feedOption(){
-  lcd.clear();
+    //change the option index to be next one and redo options if
+    if(!isButtonPressed){
+      // change the index of the food 
+      i = i+1;
+      if(i== numberOfFoodOption){
+        i=1;
+      }
+      
+  }
 
-  lcd.print("You have decided to feed your pet");
-
-
+ }
 }
 
-void showPetDisplays(Pet &aPet){
+void showPetDisplays(){
 
 
-
-  lcd.clear();
-  lcd.print("Your pet's Name is ");
-  lcd.setCursor(1,1);
-  lcd.print(aPet.getName());
-  delay(2000);
-
-  
-  lcd.clear();
-  lcd.print("Your pet age is");
-  lcd.setCursor(1,1);
-  lcd.print(aPet.getAge() +" years old");
-  delay(5000);
-
-
-  lcd.clear();
-  lcd.print("Your pet weights");
-  lcd.setCursor(1,1);
-  lcd.print(pet.getWeight()+ " pounds");
-  delay(5000);
-
-
-
-  lcd.clear();
-  lcd.print("Your pet looks like the following");
-  lcd.setCursor(1,1);
-  lcd.print(pet.getImage());
-  delay(5000);
+//
+//  lcd.clear();
+//  lcd.print("Your pet's Name is ");
+//  lcd.setCursor(1,1);
+//  lcd.print(aPet.getName());
+//  delay(2000);
+//
+//  
+//  lcd.clear();
+//  lcd.print("Your pet age is");
+//  lcd.setCursor(1,1);
+//  lcd.print(aPet.getAge() +" years old");
+//  delay(5000);
+//
+//
+//  lcd.clear();
+//  lcd.print("Your pet weights");
+//  lcd.setCursor(1,1);
+//  lcd.print(pet.getWeight()+ " pounds");
+//  delay(5000);
+//
+//
+//
+//  lcd.clear();
+//  lcd.print("Your pet looks like the following");
+//  lcd.setCursor(1,1);
+//  lcd.print(pet.getImage());
+//  delay(5000);
 
 }
 

@@ -33,7 +33,7 @@ void runGame()
   // took notes from the digital trumpet  circuit
   const int notes[] = {262, 294, 330, 349, 392, 440, 494, 523};
   const int numberOfNotes = 8;      // the number of different notes
-  const int sizeOfSequence = 5;     // the number of notes we will run
+  const int sizeOfSequence = 4;     // the number of notes we will run
   randomSeed(analogRead(0));        //reset the random seed
   int currentNoteIndex = 0;         //set the current note to intially be 0
   int noteSequence[sizeOfSequence]; // this array will contain the notes that will be played for each game
@@ -49,9 +49,9 @@ void runGame()
   int options[] = {1, 2, 3, 4, 5};
   long twoSecTimeLimit = 2000;
   lcd.clear();
-  lcd.print("Playing Note");
+  lcd.print("Playing Game");
   lcd.setCursor(0, 1);
-  lcd.print("Sequence Now");
+  lcd.print("Now");
   delay(5000);
   for (int i = 0; i < sizeOfSequence; i++) // play each note in the seqeunece for two seconds
   {

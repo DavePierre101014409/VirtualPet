@@ -9,6 +9,7 @@ This class will contain the information for our pet
 class Pet
 {
   public:
+    Pet();
     Pet(const char * name,const char * image, int age, int weight);
     bool isHungry();
     bool isHappy();

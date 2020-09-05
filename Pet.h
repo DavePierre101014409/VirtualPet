@@ -11,11 +11,19 @@ class Pet
   public:
     Pet(const char * name,const char * image, int age, int weight);
     bool isHungry();
+    bool isHappy();
     void feedMe();
+    void makeHappy();
     const char * getName();
     const char * getImage();
     int getAge();
     int getWeight();
+    void setName(const char * newName);
+    void setImage(const char * newImage);
+    void setAge(int newAge);
+    void setWeight(int newWeight);
+    
+    
 
   private:
     const char * _name;
@@ -23,6 +31,7 @@ class Pet
     int _age;
     int _weight;
     bool _isHungry;
+    bool _isHappy;
 };
 
 #endif

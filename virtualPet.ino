@@ -251,3 +251,68 @@ void showStartSequence() {
   delay(2000);                  //Wait 2 seconds
 
 }
+
+//This method will  receive input from the computer and create a pet object with it 
+void createPet()
+{
+    Serial.println("Please enter the name for your pet");   
+    String name;
+    if (Serial.available() > 0)
+    {                               
+        name = Serial.readString(); 
+        Serial.print("Yor pet's name is "); //print the pet name  to user
+        Serial.println(name);
+        delay(3000);
+    }
+    Serial.println("Please enter the image that you would like your pet to look like. (Less then 16 chracters)");   
+    String image;
+    if (Serial.available() > 0)
+    {                                           
+        image = Serial.readString();             
+        Serial.print("Yor pet looks like this"); // print the image 
+        Serial.println(image);
+        delay(3000);
+    }
+
+    Serial.println("Please enter a number for your pet's weight in pounds");
+    if (Serial.available() > 0)
+    {                                   
+        int weight = Serial.parseInt(); 
+        Serial.print("Yor Pet weight is "); 
+        Serial.print(weight);
+        Serial.println("pounds");
+    }
+
+    Serial.println("Please enter a number for your pet's age in years");
+    if (Serial.available() > 0)
+    {                               
+        int age = Serial.parseInt(); 
+        Serial.print("Yor Pet age is ");
+        Serial.print(age);
+        Serial.println("years");
+    }
+
+    //create the object here 
+}
+
+//Method used to create a random Pet
+void createRandomPet()
+{
+    const int numberOfOptions = 10; // the length of options for name, image 
+    const char * nameBank[] = {"Dave","Selena","Lebron","Chris","Karyse","Lex","Amelie","Julie","Alice","Ray"}; // created random names to pick out of 
+    const char * imageBank[] = {"00_00","--------0_0",";-;","0_0~~~~~~~~~~~","$$$$$0-0$$$$$","^_^","*_*","(_)eeeeeeeeeee","<-#_#->","p-q"}; // create random chracters tht will serve as the pet image 
+    
+
+    randomSeed(analogRead(0)); 
+    const char * name = nameBank[random(0, numberOfOptions)]; // pick a number that corrpeonds the name  out of the name bank 
+    const char * image = imageBank[random(0, numberOfOptions)]; // pick a number that corresponds to an image in the image bank 
+    int age = random(0, numberOfOptions);  //pick a number between 0 and 9 
+    int weight = random(1,numberOfOptions); // pick a number between 1- 9 
+
+
+    //create the pet object here 
+    
+
+
+
+}

@@ -11,6 +11,7 @@ Pet::Pet(const char * name,const char * image, int age, int weight)
  _age = age;
  _weight = weight;
  _isHungry = true;
+ _isHappy = false;
   
 }
 
@@ -46,3 +47,37 @@ bool Pet::isHungry()
 {
   return _isHungry;
 }
+
+void Pet::setName(const char * newName)
+{
+  _name = newName;
+}
+
+void Pet::setImage(const char * newImage)
+{
+  _image = newImage;
+}
+
+void Pet::setAge(int newAge)
+{
+  _age = newAge;
+}
+
+void Pet::setWeight(int newWeight)
+{
+   _weight = newWeight;
+}
+
+
+bool Pet::isHappy()
+{
+  return _isHappy;
+}
+void Pet::makeHappy()
+{
+  _isHappy = true;
+}
+
+
+
+    

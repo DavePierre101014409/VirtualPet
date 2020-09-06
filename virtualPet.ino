@@ -1,7 +1,7 @@
 
 /*
-  SparkFun Inventor’s Kit
-  Circuit 4C - Heads Up Game
+  
+  Project - Virtual Pet
 
   This is a DIY version of the popular Heads Up party game. To play, one person resets the RedBoard and holds the LCD
   facing away from them so that they cannot see it (usually on their forehead). The display will show a short countdown
@@ -9,11 +9,6 @@
   guesses what word is on the screen. If they guess correctly, they can press the button on the breadboard and another word
   will be displayed.
 
-  This sketch was written by SparkFun Electronics, with lots of help from the Arduino community.
-  This code is completely free for any use.
-
-  View circuit diagram and instructions at: https://learn.sparkfun.com/tutorials/sparkfun-inventors-kit-experiment-guide---v40
-  Download drawings and code at: https://github.com/sparkfun/SIK-Guide-Code
 */
 
 #include <LiquidCrystal.h>            //the liquid crystal library contains commands for printing to the display
@@ -43,7 +38,6 @@ int sequence[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -
 void setup() {
 
   pinMode(buttonPin, INPUT_PULLUP);       //set the button pin as an input
-
   lcd.begin(16, 2);                       //tell the LCD library the size of the screen
 
   //showStartSequence();                    //print the start sequence text
@@ -65,7 +59,7 @@ void loop() {
     switch (result)
     {
     case DETAILS:
-        showPetDetails();
+        showPetDisplays();
         break;
     case FEED:
         feedPet();
@@ -81,11 +75,6 @@ void loop() {
 
 }
 
-void showPetDetails()
-{
-  lcd.clear();
-  lcd.print("Pet Details");
-}
 
 void feedPet()
 {
@@ -204,36 +193,34 @@ void feedOption()
 }
 
 void showPetDisplays(){
+  lcd.clear();
+  lcd.print("Pet's Name is");
+  lcd.setCursor(0,1);
+  lcd.print(pet.getName());
+  delay(3000);
+
+  
+  lcd.clear();
+  lcd.print("Your pet age is");
+  lcd.setCursor(0,1);
+  lcd.print(pet.getAge());
+  lcd.print(" years old");
+  delay(3000);
 
 
-//
-//  lcd.clear();
-//  lcd.print("Your pet's Name is ");
-//  lcd.setCursor(1,1);
-//  lcd.print(aPet.getName());
-//  delay(2000);
-//
-//  
-//  lcd.clear();
-//  lcd.print("Your pet age is");
-//  lcd.setCursor(1,1);
-//  lcd.print(aPet.getAge() +" years old");
-//  delay(5000);
-//
-//
-//  lcd.clear();
-//  lcd.print("Your pet weights");
-//  lcd.setCursor(1,1);
-//  lcd.print(pet.getWeight()+ " pounds");
-//  delay(5000);
-//
-//
-//
-//  lcd.clear();
-//  lcd.print("Your pet looks like the following");
-//  lcd.setCursor(1,1);
-//  lcd.print(pet.getImage());
-//  delay(5000);
+  lcd.clear();
+  lcd.print("Pet weight's");
+  lcd.setCursor(0,1);
+  lcd.print(pet.getWeight());
+  lcd.print( " pounds");
+  delay(3000);
+
+
+  lcd.clear();
+  lcd.print("Pet looks like ;");
+  lcd.setCursor(0,1);
+  lcd.print(pet.getImage());
+  delay(5300);
 
 }
 
@@ -450,7 +437,7 @@ void runGame()
   lcd.print("Results");
   delay(2000);
 
-  lcd.clear();
+  lcd.clear();5
   lcd.print("The note play"); // print on the lcd screen the question : "Which note played at A"
   lcd.setCursor(0, 1);
   lcd.print("at Option ");

@@ -64,7 +64,7 @@ bool Pet::isHungry()
   return _isHungry;
 }
 
-void Pet::setName(const char *newName)
+void Pet::setName(String newName)
 {
   _name = newName;
 }

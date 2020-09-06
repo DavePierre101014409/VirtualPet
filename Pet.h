@@ -19,7 +19,7 @@ class Pet
     const char * getImage();
     int getAge();
     int getWeight();
-    void setName(const char * newName);
+    void setName(String newName);
     void setImage(const char * newImage);
     void setAge(int newAge);
     void setWeight(int newWeight);
@@ -27,7 +27,7 @@ class Pet
     
 
   private:
-    const char * _name;
+    String * _name;
     const char * _image;
     int _age;
     int _weight;

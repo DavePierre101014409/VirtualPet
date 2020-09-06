@@ -11,287 +11,305 @@
 
 */
 
-#include <LiquidCrystal.h>            //the liquid crystal library contains commands for printing to the display
+#include <LiquidCrystal.h> //the liquid crystal library contains commands for printing to the display
 #include "Pet.h"
 
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8); // tell the RedBoard what pins are connected to the display
+
+int buttonPin = 2;       //pin that the button is connected to
+int buzzerPin = 6;       //pin for driving the buzzer
 
 
-LiquidCrystal lcd(13, 12, 11, 10, 9, 8);     // tell the RedBoard what pins are connected to the display
+long timeLimit = 10000; //time limit for the player to guess each word
+long startTime = 0;     //used to measure time that has passed for each word
+int roundNumber = 0;    //keeps track of the roundNumber so that it can be displayed at the end of the game
 
-int buttonPin = 2;                    //pin that the button is connected to
-int buzzerPin = 6;                    //pin for driving the buzzer
-int buttonPressTime = 0;              //variable to show how much time the player has left to guess the word (and press the button)
-
-long timeLimit = 15000;               //time limit for the player to guess each word
-long startTime = 0;                   //used to measure time that has passed for each word
-int roundNumber = 0;                        //keeps track of the roundNumber so that it can be displayed at the end of the game
-const int arraySize = 3;
 Pet pet;
 
+const char *menuOptions[] = {"Display Your Pet", "Feed your Pet", "Play Time"};
+const int numberMenuOptions = 3;
 
-const char* options[arraySize] = {"Display Your Pet", "Feed your Pet", "Play Time"};
-
-// the start value in the sequence array must have a value that could never be an index of an array
-// or at least a value outside the range of 0 to the size of the words array - 1; in this case, it can't be between 0 to 24
-int sequence[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}; //start with an array full of -1's
-
-void setup() {
-
-  pinMode(buttonPin, INPUT_PULLUP);       //set the button pin as an input
-  lcd.begin(16, 2);                       //tell the LCD library the size of the screen
-
-  //showStartSequence();                    //print the start sequence text
-
-}
-
-void loop() {
-    
-    delay(8000);
-    int result = get_Menu_Options();
-    lcd.clear();
-    lcd.print("results are in ");
-
-    const int DETAILS = 0;
-    const int FEED = 1;
-    const int CUDDLE = 2;
-    const int PLAY = 3;
-
-    switch (result)
-    {
-    case DETAILS:
-        showPetDisplays();
-        break;
-    case FEED:
-        feedPet();
-        break;
-    case CUDDLE:
-        PlayWithPet();
-        break;
-    
-    default:
-        break;
-    }
-        delay(10000);
-
-}
-
-
-void feedPet()
+void setup()
 {
-  lcd.clear();
-  lcd.print("Feeding Pet");
+
+  pinMode(buttonPin, INPUT_PULLUP); //set the button pin as an input
+  lcd.begin(16, 2);                 //tell the LCD library the size of the screen
+  showStartSequence();              //print the start sequence text
 }
 
-void PlayWithPet()
+void loop()
 {
-  lcd.clear();
-  lcd.print("Playing");
+
+
+  int result = get_Menu_Options();
+  const int DETAILS = 0;
+  const int FEED = 1;
+  const int PLAY = 2;
+
+
+  switch (result)
+  {
+  case DETAILS:
+    showPetDisplays();
+    break;
+  case FEED:
+    feedOption();
+    break;
+  case PLAY:
+    runGame();
+    break;
+
+  default:
+    break;
+  }
+  delay(5000);
 }
 
 
+//--------------FUNCTIONS------------------------------
+
+//
+void showStartSequence()
+{
+
+  lcd.clear(); //clear the screen
+
+  lcd.setCursor(0, 0);              //move the cursor to the top left corner
+  lcd.print("Welcome to Virtual "); //print "Welcome to Virtual"
+
+  lcd.setCursor(0, 1);    //move the cursor to the bottom left corner
+  lcd.print("Pet World"); //print "Pet World"
+  delay(2000); //Wait 2 seconds
+}
+
+//THIS function will display the menu options and get the userChoice and display it 
 int get_Menu_Options()
 {
 
-  bool isButtonPressed = false;
-  int optionIndex = 0;
-  lcd.clear();   //clear the screen
-  lcd.print("Press the button");   //Display Choose one of options then delay for 2 seconds 
-  lcd.setCursor(0, 1);    
-  lcd.print("for the option");
-  delay(2000);
-  while (!isButtonPressed){  
-    
-    startTime = millis();  //record the time that this option started
-    while(millis() - startTime < timeLimit){ 
-      lcd.clear();  //clear screen
-      lcd.print(options[optionIndex]); // print option
-      int roundedTime = round((timeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
-      lcd.setCursor(14, 1);                                                 //set the cursor in the lower right corner of the screen
-      lcd.print("  ");
-      lcd.setCursor(14, 1);   //set the cursor in the lower right corner of the screen
-      lcd.print(roundedTime); //print the time left in the time limit
-      delay(15);
-      
-      if (digitalRead(buttonPin) == LOW) {
-        isButtonPressed = true;
-        tone(buzzerPin, 272, 10);                   //emit a short beep when the button is pressed
-        lcd.clear();
-        lcd.print("Button Pressed");
-        delay(10000); 
-       //return user_Input to main program
-      }
-  
-    }
+  bool isButtonPressed = false; // boolean to check if the button is pressed
+  int optionIndex = 0;          // the current option of the choices
+  lcd.clear();                   //clear the screen
+  lcd.print("Press the button"); //Display Choose one of options then delay for 2 seconds
+  lcd.setCursor(0, 1);          // change cursor to be on next line 
+  lcd.print("for the option");  //Display for the option
+  delay(2000);                  // display for 2 seconds
+  while (!isButtonPressed)      // will run this code until the button is pressed
+  {
 
-    //change the option index to be next one and redo options if
-    if(!isButtonPressed){
-      if(optionIndex== (arraySize -1)){
-      optionIndex = 0;
-    }else{
-      optionIndex+=1;
-    }
-      
-    }
-
- }
- return optionIndex;
-}
-
-void feedOption()
-{
-  const char * foodOptions[] = {"Chicken","Apple","Carrot"};
-  const int numberOfFoodOption = 3;
-  bool isButtonPressed = false;
-  int optionIndex = 0;
-  lcd.clear();   //clear the screen
-  lcd.print("Pick the food");   //Display Choose one of options then delay for 2 seconds 
-  lcd.setCursor(0, 1);    
-  lcd.print("to feed your pet");
-  int i =0;
-  int userChoice;
-  delay(2000);
-  while (!isButtonPressed){  
-    
-    startTime = millis();  //record the time that this option started
-    while(millis() - startTime < timeLimit){ 
-      lcd.clear();  //clear screen
-      lcd.print("Option "); // write in the lcd screen option number
-      lcd.print(i+1);
-      lcd.setCursor(0, 1); 
-      lcd.print(foodOptions[i]);
+    startTime = millis(); //record the time that this option started
+    while (millis() - startTime < timeLimit and not(isButtonPressed)) // while there is time left
+    {
+      lcd.clear();                                                          //clear screen
+      lcd.print(menuOptions[optionIndex]);                                      // print option
       int roundedTime = round((timeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
       lcd.setCursor(14, 1);                                                 //set the cursor in the lower right corner of the screen
       lcd.print("  ");
       lcd.setCursor(14, 1);   //set the cursor in the lower right corner of the screen
       lcd.print(roundedTime); //print the time left in the time limit
       delay(1000);
-      
-      if (digitalRead(buttonPin) == LOW) {
-        isButtonPressed = true;
-        tone(buzzerPin, 272, 10);                   //emit a short beep when the button is pressed
+
+      if (digitalRead(buttonPin) == LOW) // when the button is pressd
+      {
+        isButtonPressed = true; // set the booolean that the button is pressed
+        tone(buzzerPin, 272, 10); //emit a short beep when the button is pressed
         lcd.clear();
-        lcd.print("You Selected");
-        lcd.setCursor(0, 1); 
-        lcd.print(foodOptions[i]);
-        delay(3000); 
+        lcd.print("You Selected"); // print out the selected option
+        lcd.setCursor(0,1);
+        lcd.print(menuOptions[optionIndex]);
+        delay(3000); // display for three seconds 
+      
       }
- 
-  
     }
 
-    //change the option index to be next one and redo options if
-    if(!isButtonPressed){
-      // change the index of the food 
-      i = i+1;
-      if(i== numberOfFoodOption){
-        i=1;
+    //change the option index to be next one and redo options if we reach the end of options
+    if (!isButtonPressed)
+    {
+      if (optionIndex == (numberMenuOptions - 1))
+      {
+        optionIndex = 0;
       }
-      
+      else
+      {
+        optionIndex += 1;
+      }
+    }
   }
-
- }
+  return optionIndex;// return the option index that the user selected
 }
 
-void showPetDisplays(){
+//this function will allow the user to choose what food to eat
+void chooseWhatToEat()
+{
+  const char *foodOptions[] = {"Chicken", "Apple", "Carrot"}; // create the food option
+  const int numberOfFoodOption = 3; // number Of food option
+  bool isButtonPressed = false;
+  int optionIndex = 0;
+  lcd.clear();                //clear the screen
+  lcd.print("Pick the food"); //Display Choose one of options then delay for 2 seconds
+  lcd.setCursor(0, 1);
+  lcd.print("to feed the pet");
+  int userChoice;
+  delay(2000);
+   while (!isButtonPressed)      // will run this code until the button is pressed
+  {
+
+    startTime = millis(); //record the time that this option started
+    while (millis() - startTime < timeLimit and not(isButtonPressed)) // while there is time left
+    {
+      lcd.clear();                                                          //clear screen
+      lcd.print("Option ");
+      lcd.print(optionIndex+1);
+      lcd.setCursor(0,1);
+      lcd.print(foodOptions[optionIndex]);                                      // print option
+      int roundedTime = round((timeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
+      lcd.setCursor(14, 1);                                                 //set the cursor in the lower right corner of the screen
+      lcd.print("  ");
+      lcd.setCursor(14, 1);   //set the cursor in the lower right corner of the screen
+      lcd.print(roundedTime); //print the time left in the time limit
+      delay(1000);
+
+      if (digitalRead(buttonPin) == LOW) // when the button is pressd
+      {
+        isButtonPressed = true; // set the booolean that the button is pressed
+        tone(buzzerPin, 272, 10); //emit a short beep when the button is pressed
+        lcd.clear();
+        lcd.print("You Selected"); // print out the selected option
+        lcd.setCursor(0,1);
+        lcd.print(foodOptions[optionIndex]);
+        delay(3000); // display for three seconds 
+      
+      }
+    }
+
+    //change the option index to be next one and redo options if we reach the end of options
+    if (!isButtonPressed)
+    {
+      if (optionIndex == (numberOfFoodOption - 1))
+      {
+        optionIndex = 0;
+      }
+      else
+      {
+        optionIndex += 1;
+      }
+    }
+  }
+
+  lcd.clear();
+  lcd.print("Pet is eating");
+  lcd.setCursor(0,1);
+  lcd.print(foodOptions[optionIndex]);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+}
+void feedOption()
+{
+  chooseWhatToEat();
+  pet.feedMe();
+  
+
+}
+
+//this function will display the details of the Pet
+void showPetDisplays()
+{
+
+  //Display the Pet details
   lcd.clear();
   lcd.print("Pet's Name is");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print(pet.getName());
   delay(3000);
 
-  
+  //Display the Pet's age
   lcd.clear();
   lcd.print("Your pet age is");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print(pet.getAge());
   lcd.print(" years old");
   delay(3000);
 
-
+  //Dsplay the Pet weight
   lcd.clear();
   lcd.print("Pet weight's");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print(pet.getWeight());
-  lcd.print( " pounds");
+  lcd.print(" pounds");
   delay(3000);
 
-
+  //Display the Pet image
   lcd.clear();
-  lcd.print("Pet looks like ;");
-  lcd.setCursor(0,1);
+  lcd.print("Pet looks like");
+  lcd.setCursor(0, 1);
   lcd.print(pet.getImage());
-  delay(5300);
+  delay(3000);
 
+  //Display whether the Pet is hungry or not
+  lcd.clear();
+  if (pet.isHungry())
+  {
+    lcd.print("Pet is hungry");
+  }
+  else
+  {
+    lcd.print("Pet is not hungry");
+  }
+  delay(3000);
+
+  //Display whether the Pet is happy or not
+  lcd.clear();
+  if (pet.isHappy())
+  {
+    lcd.print("Pet is happy");
+  }
+  else
+  {
+    lcd.print("Pet is not happy");
+  }
+  delay(3000);
 }
-
-
-//--------------FUNCTIONS------------------------------
-
-//DISPLAYS A COUNTDOWN TO START THE GAME
-void showStartSequence() {
-
-  lcd.clear();                  //clear the screen
-
-  lcd.setCursor(0, 0);          //move the cursor to the top left corner
-  lcd.print("Welcome to Virtual ");       //print "Welcome to Virtual"
-
-  lcd.setCursor(0, 1);          //move the cursor to the bottom left corner
-  lcd.print("Pet World");         //print "Pet World"
-
-  delay(2000);                  //Wait 2 seconds
-
-}
-
-//This method will  receive input from the computer and create a pet object with it 
+//This method will  receive input from the computer and create a pet object with it
 void createPet()
 {
-    // Serial.println("Please enter the name for your pet");   
-  
-    // if (Serial.available() > 0)
-    // {                               
-    //     const char * name = Serial.readString(); 
+  // Serial.println("Please enter the name for your pet");
 
-    //     pet.setName(name);
-    //     Serial.print("Yor pet's name is "); //print the pet name  to user
-    //     Serial.println(name);
-    //     delay(3000);
-    // }
-    // Serial.println("Please enter the image that you would like your pet to look like. (Less then 16 chracters)");   
-    // String image;
-    // if (Serial.available() > 0)
-    // {                                           
-    //     image = Serial.readString();             
-    //     Serial.print("Yor pet looks like this"); // print the image 
-    //     Serial.println(image);
-    //     delay(3000);
-    // }
+  // if (Serial.available() > 0)
+  // {
+  //     const char * name = Serial.readString();
 
-    Serial.println("Please enter a number for your pet's weight in pounds");
-    if (Serial.available() > 0)
-    {                                   
-        int weight = Serial.parseInt(); 
-        pet.setWeight(weight);
-        Serial.print("Yor Pet weight is "); 
-        Serial.print(weight);
-        Serial.println("pounds");
-    }
+  //     pet.setName(name);
+  //     Serial.print("Yor pet's name is "); //print the pet name  to user
+  //     Serial.println(name);
+  //     delay(3000);
+  // }
+  // Serial.println("Please enter the image that you would like your pet to look like. (Less then 16 chracters)");
+  // String image;
+  // if (Serial.available() > 0)
+  // {
+  //     image = Serial.readString();
+  //     Serial.print("Yor pet looks like this"); // print the image
+  //     Serial.println(image);
+  //     delay(3000);
+  // }
 
-    Serial.println("Please enter a number for your pet's age in years");
-    if (Serial.available() > 0)
-    {                               
-        int age = Serial.parseInt(); 
-        pet.setAge(age);
-        Serial.print("Yor Pet age is ");
-        Serial.print(age);
-        Serial.println("years");
-    }
+  Serial.println("Please enter a number for your pet's weight in pounds");
+  if (Serial.available() > 0)
+  {
+    int weight = Serial.parseInt();
+    pet.setWeight(weight);
+    Serial.print("Yor Pet weight is ");
+    Serial.print(weight);
+    Serial.println("pounds");
+  }
 
-    
-    
-   
+  Serial.println("Please enter a number for your pet's age in years");
+  if (Serial.available() > 0)
+  {
+    int age = Serial.parseInt();
+    pet.setAge(age);
+    Serial.print("Yor Pet age is ");
+    Serial.print(age);
+    Serial.println("years");
+  }
 }
-
-
 
 //This method will run the game for our virtual pet
 void runGame()
@@ -324,7 +342,8 @@ void runGame()
 
   //This will play the song for a second a write the option on the screen
   int options[] = {1, 2, 3, 4, 5};
-  long twoSecTimeLimit = 2000;
+  bool isButtonPressed = false;
+  long fourSecTimeLimit = 2000;
   lcd.clear();
   lcd.print("Playing Game");
   lcd.setCursor(0, 1);
@@ -332,16 +351,39 @@ void runGame()
   delay(5000);
   for (int i = 0; i < sizeOfSequence; i++) // play each note in the seqeunece for two seconds
   {
+    startTime = millis(); //record the time that this option started
+    while (millis() - startTime < timeLimit) // while there is time left
+    {
+      
+      lcd.clear();
+      lcd.print("Option "); // write in the lcd screen option number
+      lcd.print(options[i]);
+      lcd.print("  ");
+      lcd.print(noteSequence[i]);
+      tone(buzzerPin, noteSequence[i]); // play the buzzer
+      int roundedTime = round((timeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
+      lcd.print("  ");
+      lcd.setCursor(14, 1);   //set the cursor in the lower right corner of the screen
+      lcd.print(roundedTime); //print the time left in the time limit
+      delay(1000);
 
-    lcd.clear();
-    lcd.print("Option "); // write in the lcd screen option number
-    lcd.print(options[i]);
-    lcd.print("  ");
-    lcd.print(noteSequence[i]);
-    tone(buzzerPin, noteSequence[i]); // play the buzzer
-    delay(twoSecTimeLimit);           // delay for 2 second timeout
-    noTone(buzzerPin);                // turn off the buzzer
-    delay(twoSecTimeLimit);
+      if (digitalRead(buttonPin) == LOW) // when the button is pressd
+      {
+        isButtonPressed = true; // set the booolean that the button is pressed
+        tone(buzzerPin, 272, 10); //emit a short beep when the button is pressed
+        lcd.clear();
+        lcd.print("You Selected"); // print out the selected option
+        lcd.setCursor(0,1);
+        lcd.print("Option "); 
+        lcd.print(options[i]);
+        delay(3000); // display for three seconds 
+      
+      }
+    }
+    // turn off the buzzer for two seconds 
+    noTone(buzzerPin);
+    delay(2000);
+
   }
 
   //generate question and print it out
@@ -412,7 +454,7 @@ void runGame()
 
     if (digitalRead(buttonPin) == LOW)
     {                            // when a user has press the button
-      userHasNotAnswer = false;      //set the boolean to false
+      userHasNotAnswer = false;  //set the boolean to false
       tone(buzzerPin, 272, 10);  //emit a short beep when the button is pressed
       lcd.clear();               // clear screen
       lcd.print("You Selected"); // print on the screen that You selected Option X
@@ -437,7 +479,7 @@ void runGame()
   lcd.print("Results");
   delay(2000);
 
-  lcd.clear();5
+  lcd.clear();
   lcd.print("The note play"); // print on the lcd screen the question : "Which note played at A"
   lcd.setCursor(0, 1);
   lcd.print("at Option ");

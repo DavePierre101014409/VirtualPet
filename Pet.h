@@ -1,22 +1,40 @@
 /*
 This class will contain the information for our pet
 */
-#ifndef Morse_h
-#define Morse_h
+#ifndef PET_H
+#define PET_H
 
 #include "Arduino.h"
+
 class Pet
 {
   public:
-    Pet(const char * name,const char * image, int age, int weight);
-    const char * isHungry();
+    Pet();
+    Pet(String name,String image, int age, int weight);
+    bool isHungry();
+    bool isHappy();
     void feedMe();
+    void setIsHappy(bool isHappy);
+    String getName();
+    String getImage();
+    int getAge();
+    int getWeight();
+    void setName(String newName);
+    void setImage(String newImage);
+    void setAge(int newAge);
+    void setWeight(int newWeight);
+    void setIsHungry(bool isHungry);
+
+    
+    
+
   private:
-    const char * _name;
-    const char * _image;
+    String  _name;
+    String _image;
     int _age;
     int _weight;
     bool _isHungry;
+    bool _isHappy;
 };
 
 #endif

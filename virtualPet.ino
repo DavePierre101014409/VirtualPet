@@ -3,11 +3,7 @@
   
   Project - Virtual Pet
 
-  This is a DIY version of the popular Heads Up party game. To play, one person resets the RedBoard and holds the LCD
-  facing away from them so that they cannot see it (usually on their forehead). The display will show a short countdown
-  then display random words. The other player(s) who can see the screen must yell out clues until time runs out or the player
-  guesses what word is on the screen. If they guess correctly, they can press the button on the breadboard and another word
-  will be displayed.
+  //This is a DIY version of tamagotchi game. To play, one person connects the RedBoard to the computer. 
 
 */
 
@@ -22,6 +18,11 @@ int buzzerPin = 6; //pin for driving the buzzer
 long timeLimit = 10000; //time limit for the player to guess each word
 long startTime = 0;     //used to measure time that has passed for each word
 int roundNumber = 0;    //keeps track of the roundNumber so that it can be displayed at the end of the game
+
+int numberOfRounds= 0;
+
+int roundsToBeHungry =3;
+int roundsToBeHappy = 4;
 
 Pet pet;
 
@@ -41,7 +42,7 @@ void setup()
 
 void loop()
 {
-
+  roundNumber++;
   int result = get_Menu_Options();
   const int DETAILS = 0;
   const int FEED = 1;
@@ -61,6 +62,15 @@ void loop()
 
   default:
     break;
+  }
+  //setting the Pet to be hungry after every three rounds 
+
+  if(roundNumber % roundsToBeHappy ==0){
+    pet.setIsHappy(false);
+    
+  }
+  if (roundNumber % roundsToBeHungry ==0){
+      pet.setIsHungry(true);
   }
   delay(5000);
 }
@@ -188,7 +198,7 @@ void chooseWhatToEat()
   lcd.print("to feed the pet");
   int userChoice;
   delay(2000);
-  while (!isButtonPressed) // will run this code until the button is pressed
+  while (!isButtonPressed) // will run this code until the button is pressedx
   {
 
     startTime = millis();                                             //record the time that this option started
@@ -281,11 +291,16 @@ void showPetDisplays()
   lcd.clear();
   if (pet.isHungry())
   {
-    lcd.print("Pet is hungry");
+    lcd.print("Pet is");
+    lcd.setCursor(0,1);
+    lcd.print("hungry");
+  
   }
   else
   {
-    lcd.print("Pet is not hungry");
+    lcd.print("Pet is not");
+    lcd.setCursor(0,1);
+    lcd.print("hungry");
   }
   delay(3000);
 
@@ -316,7 +331,7 @@ void createPet()
 
       pet.setName(name);
       Serial.print(name.length());
-      Serial.print("Yor pet's name is "); //print the pet name  to user
+      Serial.print("Youer pet's name is "); //print the pet name  to user
       Serial.println(name);
       hasNotUserInput = false;
       delay(3000);

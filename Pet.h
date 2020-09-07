@@ -14,7 +14,7 @@ class Pet
     bool isHungry();
     bool isHappy();
     void feedMe();
-    void makeHappy();
+    void setIsHappy(bool isHappy);
     String getName();
     String getImage();
     int getAge();
@@ -23,6 +23,8 @@ class Pet
     void setImage(String newImage);
     void setAge(int newAge);
     void setWeight(int newWeight);
+    void setIsHungry(bool isHungry);
+
     
     
 

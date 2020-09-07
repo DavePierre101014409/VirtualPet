@@ -63,6 +63,10 @@ bool Pet::isHungry()
 {
   return _isHungry;
 }
+void Pet::setIsHungry(bool isHungry)
+{
+  _isHungry = isHungry;
+}
 
 void Pet::setName(String newName)
 {
@@ -88,7 +92,7 @@ bool Pet::isHappy()
 {
   return _isHappy;
 }
-void Pet::makeHappy()
+void Pet::setIsHappy(bool isHappy)
 {
-  _isHappy = true;
+  _isHappy = isHappy;
 }

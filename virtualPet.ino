@@ -297,22 +297,8 @@ void createPet()
     }
   }
 
-  hasNotUserInput = true;
-  Serial.println("Please enter a number for your pet's age in years");
-  while (hasNotUserInput)
-  { 
-    if (Serial.available() > 0)
-    {
-      int age = Serial.parseInt();
-      pet.setAge(age);
-      Serial.print("Yor Pet age is ");
-      Serial.print(age);
-      Serial.println("years");
-      hasNotUserInput = false;
-      delay(3000);
-    }
-  }
-}
+
+
 
   hasNotUserInput = true;
   Serial.println("Please enter a number for your pet's weight in pounds");
@@ -325,11 +311,35 @@ void createPet()
       pet.setWeight(weight);
       Serial.print("Yor Pet weight is ");
       Serial.print(weight);
-      Serial.println(" ounds");
+      Serial.println(" pounds");
       hasNotUserInput = false;
       delay(3000);
     }
   }
+
+  
+  hasNotUserInput = true;
+  Serial.end();
+  Serial.begin(9600);
+  Serial.println("Please enter a number for your pet's age in years");
+  Serial.setTimeout(500);
+  while (hasNotUserInput)
+  { 
+    if (Serial.available() > 0)
+    {
+      int age = Serial.parseInt();
+      pet.setAge(age);
+      Serial.print("Yor Pet age is ");
+      Serial.print(age);
+      Serial.println(" years");
+      hasNotUserInput = false;
+      delay(3000);
+    }
+  }
+
+}
+
+
 
 
 

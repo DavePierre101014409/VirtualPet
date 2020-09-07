@@ -57,7 +57,7 @@ void loop()
     feedOption();
     break;
   case PLAY:
-    runGame();
+    playOption();
     break;
 
   default:
@@ -251,9 +251,9 @@ void feedOption()
   chooseWhatToEat();
   pet.feedMe();
 }
-
+//this 
 void playOption(){
-  playOption();
+  runGame();
   pet.setIsHappy(true);
 }
 

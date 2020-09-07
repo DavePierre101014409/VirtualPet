@@ -252,6 +252,11 @@ void feedOption()
   pet.feedMe();
 }
 
+void playOption(){
+  playOption();
+  pet.setIsHappy(true);
+}
+
 //this function will display the details of the Pet
 void showPetDisplays()
 {

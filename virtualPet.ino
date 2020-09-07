@@ -63,8 +63,7 @@ void loop()
   default:
     break;
   }
-  //setting the Pet to be hungry after every three rounds 
-
+  //setting the Pet to be hungry after every three rounds  and setting the PEt to be happy every four rounds
   if(roundNumber % roundsToBeHappy ==0){
     pet.setIsHappy(false);
     
@@ -330,8 +329,7 @@ void createPet()
       String name = Serial.readString();
 
       pet.setName(name);
-      Serial.print(name.length());
-      Serial.print("Youer pet's name is "); //print the pet name  to user
+      Serial.print("Your pet's name is "); //print the pet name  to user
       Serial.println(name);
       hasNotUserInput = false;
       delay(3000);
@@ -420,6 +418,7 @@ void runGame()
     noteSequence[i] = notes[currentNoteIndex];   //add the note in the note sequence
   }
 
+  //TODO: make this display for 5 seconds
   //This will play the song for a second a write the option on the screen
   int options[] = {1, 2, 3, 4, 5};
   bool isButtonPressed = false;
@@ -497,28 +496,34 @@ void runGame()
         {                  //does the currentNote match any of the numbers?
           hasMatch = true; //if so, set the match variable to true
         }
+
         if (mutipleChoiceOptions[i] == answerNote)
         {
           containAnswer = true;
         }
+     
       }
     } while (hasMatch == true);            //if the match variable is true, generate another random number and try again
     mutipleChoiceOptions[i] = currentNote; //if the match variable is false (the new number is unique) then add it to the sequence
+ 
   }
 
   //if the mutiple choice options does not contain the answer note then replace one of the options as the answer
 
-  if (containAnswer)
+  if (not(containAnswer))
   {
     int randomIndex = random(0, sizeOfSequence); // generate a number from 0-4
     mutipleChoiceOptions[randomIndex] = answerNote;
   }
 
+
+  //TODO:add the seconds into this and change when it is selected
   bool userHasNotAnswer = true;
   //This code is to display the mutiple choice options
   const char *choiceOptions[] = {"A", "B", "C", "D", "E"};
   int i = 0;
   int userChoice = 0;
+  int userChoiceIndex = -1;
   while (userHasNotAnswer)
   {
     lcd.clear();
@@ -541,6 +546,7 @@ void runGame()
       lcd.print(choiceOptions[i]);
       delay(10000);
       userChoice = mutipleChoiceOptions[i];
+      userChoiceIndex = i;
     }
     if (userHasNotAnswer)
     {
@@ -569,8 +575,8 @@ void runGame()
   lcd.clear();
   lcd.print("You Selected"); // print on the lcd screen the question : "Which note played at A"
   lcd.setCursor(0, 1);
-  lcd.print("at Option ");
-  lcd.print(choiceOptions[answerNoteIndex]);
+  lcd.print("Option ");
+  lcd.print(choiceOptions[userChoiceIndex]);
   lcd.print("= ");
   lcd.print(userChoice);
   delay(3000);

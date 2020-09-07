@@ -10,25 +10,25 @@ class Pet
 {
   public:
     Pet();
-    Pet(const char * name,const char * image, int age, int weight);
+    Pet(String name,String image, int age, int weight);
     bool isHungry();
     bool isHappy();
     void feedMe();
     void makeHappy();
-    const char * getName();
-    const char * getImage();
+    String getName();
+    String getImage();
     int getAge();
     int getWeight();
     void setName(String newName);
-    void setImage(const char * newImage);
+    void setImage(String newImage);
     void setAge(int newAge);
     void setWeight(int newWeight);
     
     
 
   private:
-    String * _name;
-    const char * _image;
+    String  _name;
+    String _image;
     int _age;
     int _weight;
     bool _isHungry;

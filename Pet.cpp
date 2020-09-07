@@ -9,8 +9,8 @@ Pet::Pet()
   // Creates a random pet details
 
   const int numberOfOptions = 10;                                                                                                                 // the length of options for name, image
-  const char *nameBank[] = {"Dave", "Selena", "Lebron", "Chris", "Karyse", "Lex", "Amelie", "Julie", "Alice", "Ray"};                             // created random names to pick out of
-  const char *imageBank[] = {"00_00", "--------0_0", ";-;", "0_0~~~~~~~~~~~", "$$$$$0-0$$$$$", "^_^", "*_*", "(_)eeeeeeeeeee", "<-#_#->", "p-q"}; // create random chracters tht will serve as the pet image
+  String nameBank[] = {"Dave", "Selena", "Lebron", "Chris", "Karyse", "Lex", "Amelie", "Julie", "Alice", "Ray"};                             // created random names to pick out of
+  String imageBank[] = {"00_00", "--------0_0", ";-;", "0_0~~~~~~~~~~~", "$$$$$0-0$$$$$", "^_^", "*_*", "(_)eeeeeeeeeee", "<-#_#->", "p-q"}; // create random chracters tht will serve as the pet image
 
   randomSeed(analogRead(0));
   _name = nameBank[random(0, numberOfOptions)];   // pick a number that corrpeonds the name  out of the name bank
@@ -22,7 +22,7 @@ Pet::Pet()
   _isHappy = false;
 }
 
-Pet::Pet(const char *name, const char *image, int age, int weight)
+Pet::Pet(String name, String image, int age, int weight)
 {
   _name = name;
   _image = image;
@@ -39,12 +39,12 @@ void Pet::feedMe()
   _isHungry = false;
 }
 
-const char *Pet::getName()
+String Pet::getName()
 {
   return _name;
 }
 
-const char *Pet::getImage()
+String Pet::getImage()
 {
   return _image;
 }
@@ -69,7 +69,7 @@ void Pet::setName(String newName)
   _name = newName;
 }
 
-void Pet::setImage(const char *newImage)
+void Pet::setImage(String newImage)
 {
   _image = newImage;
 }

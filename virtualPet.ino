@@ -520,7 +520,7 @@ void createMutipleChoiceQuestion(int noteSequence[],int sizeOfSequence, int muti
   }
 }
 
-void displayMutipleChoiceQuestion(int noteSequence[],int sizeOfSequence, int mutipleChoiceOptions[], int answerNoteIndex){
+int displayMutipleChoiceQuestion(int noteSequence[],int sizeOfSequence, int mutipleChoiceOptions[], int answerNoteIndex){
   bool userHasNotAnswer = true;
   //This code is to display the mutiple choice options
   const char *choiceOptions[] = {"A", "B", "C", "D", "E"};
@@ -610,10 +610,12 @@ void displayMutipleChoiceQuestion(int noteSequence[],int sizeOfSequence, int mut
   if (userChoice == answerNote)
   {
     lcd.print("You were correct");
+    return 1;
   }
   else
   {
     lcd.print("You were wrong");
+    return 0;
   }
   delay(5000);
 
@@ -632,13 +634,19 @@ void runGame()
   //   a     440 Hz
   //   b     494 Hz
   //   C     523 Hz
+  
+
+  for (int i = 0; i < 3; i++){
+    int noteSequence[sizeOfSequence];  // this array will contain the notes that will be played for each game
+    createNoteSequence(noteSequence,sizeOfSequence); //create note Sequence
+    playNoteSequence(noteSequence,sizeOfSequence);
+    int mutipleChoiceOptions[] = {-1, -1, -1, -1, -1};   // create an array of mutiple choice options
+    int answerNoteIndex = -1;
+    createMutipleChoiceQuestion(noteSequence,sizeOfSequence, mutipleChoiceOptions,answerNoteIndex);
+    displayMutipleChoiceQuestion(noteSequence,sizeOfSequence, mutipleChoiceOptions,answerNoteIndex);    
+    
+  }
 
 
-  int noteSequence[sizeOfSequence];  // this array will contain the notes that will be played for each game
-  createNoteSequence(noteSequence,sizeOfSequence); //create note Sequence
-  playNoteSequence(noteSequence,sizeOfSequence);
-  int mutipleChoiceOptions[] = {-1, -1, -1, -1, -1};   // create an array of mutiple choice options
-  int answerNoteIndex = -1;
-  createMutipleChoiceQuestion(noteSequence,sizeOfSequence, mutipleChoiceOptions,answerNoteIndex);
-  displayMutipleChoiceQuestion(noteSequence,sizeOfSequence, mutipleChoiceOptions,answerNoteIndex);    
+ 
 }

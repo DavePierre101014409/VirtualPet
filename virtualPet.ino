@@ -19,13 +19,21 @@ long timeLimit = 10000; //time limit for the player to guess each word
 long startTime = 0;     //used to measure time that has passed for each word
 int roundNumber = 0;    //keeps track of the roundNumber so that it can be displayed at the end of the game
 
-int numberOfRounds= 0;
 
+//variables to used for the games
+const int notes[] = {262, 294, 330, 349, 392, 440, 494, 523};
+const int numberOfNotes = 8;      // the number of different notes
+const int sizeOfSequence = 4;     // the number of notes we will run
+
+// variables that will be needed to pet's isHungry and isHAppy variables
+int numberOfRounds= 0;
 int roundsToBeHungry =3;
 int roundsToBeHappy = 4;
 
+//used to save the Pet details
 Pet pet;
 
+//used for the menu options 
 const char *menuOptions[] = {"Display Your Pet", "Feed your Pet", "Play Time"};
 const int numberMenuOptions = 3;
 
@@ -394,27 +402,11 @@ void createPet()
   }
 }
 
-//This method will run the game for our virtual pet
-void runGame()
-{
-
-  //   note  frequency
-  //   c     262 Hz
-  //   d     294 Hz
-  //   e     330 Hz
-  //   f     349 Hz
-  //   g     392 Hz
-  //   a     440 Hz
-  //   b     494 Hz
-  //   C     523 Hz
-
-  // took notes from the digital trumpet  circuit
-  const int notes[] = {262, 294, 330, 349, 392, 440, 494, 523};
-  const int numberOfNotes = 8;      // the number of different notes
-  const int sizeOfSequence = 4;     // the number of notes we will run
+//this method will create a note sequence that the user will have to memorize
+void createNoteSequence(int noteSequence[],int sizeOfSequence){
   randomSeed(analogRead(0));        //reset the random seed
   int currentNoteIndex = 0;         //set the current note to intially be 0
-  int noteSequence[sizeOfSequence]; // this array will contain the notes that will be played for each game
+
 
   // get 5 random notes that will be create a sequence
   for (int i = 0; i < sizeOfSequence; i++)
@@ -423,29 +415,32 @@ void runGame()
     noteSequence[i] = notes[currentNoteIndex];   //add the note in the note sequence
   }
 
-  //TODO: make this display for 5 seconds
+}
+
+
+void playNoteSequence(int noteSequence[],int sizeOfSequence){
+    
   //This will play the song for a second a write the option on the screen
-  int options[] = {1, 2, 3, 4, 5};
   bool isButtonPressed = false;
-  long fourSecTimeLimit = 2000;
+  long fiveSecTimeLimit = 5000;
   lcd.clear();
   lcd.print("Playing Game");
   lcd.setCursor(0, 1);
   lcd.print("Now");
   delay(5000);
-  for (int i = 0; i < sizeOfSequence; i++) // play each note in the seqeunece for two seconds
+  for (int i = 0; i < sizeOfSequence; i++) // play each note in the seqeunece for five seconds
   {
     startTime = millis();                    //record the time that this option started
-    while (millis() - startTime < timeLimit) // while there is time left
+    while (millis() - startTime < fiveSecTimeLimit) // while there is time left
     {
 
       lcd.clear();
       lcd.print("Option "); // write in the lcd screen option number
-      lcd.print(options[i]);
+      lcd.print(i+1);
       lcd.print("  ");
       lcd.print(noteSequence[i]);
       tone(buzzerPin, noteSequence[i]);                                     // play the buzzer
-      int roundedTime = round((timeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
+      int roundedTime = round((fiveSecTimeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
       lcd.print("  ");
       lcd.setCursor(14, 1);   //set the cursor in the lower right corner of the screen
       lcd.print(roundedTime); //print the time left in the time limit
@@ -459,7 +454,7 @@ void runGame()
         lcd.print("You Selected"); // print out the selected option
         lcd.setCursor(0, 1);
         lcd.print("Option ");
-        lcd.print(options[i]);
+        lcd.print(i +1);
         delay(3000); // display for three seconds
       }
     }
@@ -468,17 +463,20 @@ void runGame()
     delay(2000);
   }
 
+}
+
+void createMutipleChoiceQuestion(int noteSequence[],int sizeOfSequence, int mutipleChoiceOptions[], int  &answerNoteIndex){
   //generate question and print it out
-  int mutipleChoiceOptions[] = {-1, -1, -1, -1, -1}; // create an array of mutiple choice options
+
   randomSeed(analogRead(0));                         //reset the random seed (Arduino needs this to generate truly random numbers
-  int answerNoteIndex = random(0, sizeOfSequence);   // generate a number from 0-4
+  answerNoteIndex = random(0, sizeOfSequence);   // generate a number from 0-4
   int answerNote = noteSequence[answerNoteIndex];
   long fiveSecTimeOut = 5000;
   lcd.clear();
   lcd.print("Which note play"); // print on the lcd screen the question : "Which note played at A"
   lcd.setCursor(0, 1);
   lcd.print("at Option ");
-  lcd.print(options[answerNoteIndex]);
+  lcd.print(answerNoteIndex+1);
   delay(fiveSecTimeOut);
 
   //Create 5 different mutiple choice options
@@ -520,39 +518,59 @@ void runGame()
     int randomIndex = random(0, sizeOfSequence); // generate a number from 0-4
     mutipleChoiceOptions[randomIndex] = answerNote;
   }
+}
 
-
-  //TODO:add the seconds into this and change when it is selected
+void displayMutipleChoiceQuestion(int noteSequence[],int sizeOfSequence, int mutipleChoiceOptions[], int answerNoteIndex){
   bool userHasNotAnswer = true;
   //This code is to display the mutiple choice options
   const char *choiceOptions[] = {"A", "B", "C", "D", "E"};
+
   int i = 0;
   int userChoice = 0;
   int userChoiceIndex = -1;
-  while (userHasNotAnswer)
+  int answerNote = noteSequence[answerNoteIndex];
+  //This will play the song for a second a write the option on the screen
+  bool isButtonPressed = false;
+  long fiveSecTimeLimit = 5000;
+
+  int optionIndex = 0;           // the current option of the choices
+  lcd.clear();                   //clear the screen
+  lcd.print("Press the button"); //Display Choose one of options then delay for 2 seconds
+  lcd.setCursor(0, 1);           // change cursor to be on next line
+  lcd.print("for the option");   //Display for the option
+  delay(2000);                   // display for 2 seconds
+  while (userHasNotAnswer)       // will run this code until the button is pressed
   {
-    lcd.clear();
-    lcd.print("Option "); // write in the lcd screen option number
-    lcd.print(choiceOptions[i]);
-    lcd.print("  ");
-    lcd.print(mutipleChoiceOptions[i]);
-    tone(buzzerPin, mutipleChoiceOptions[i]); // play the buzzer
 
-    delay(5000); // delay for 5 second
+    startTime = millis();                                             //record the time that this option started
+    while (millis() - startTime < fiveSecTimeLimit and userHasNotAnswer) // while there is time left
+    {
 
-    if (digitalRead(buttonPin) == LOW)
-    {                            // when a user has press the button
-      userHasNotAnswer = false;  //set the boolean to false
-      tone(buzzerPin, 272, 10);  //emit a short beep when the button is pressed
-      lcd.clear();               // clear screen
-      lcd.print("You Selected"); // print on the screen that You selected Option X
-      lcd.setCursor(0, 1);
-      lcd.print("Option ");
+      lcd.clear();
+      lcd.print("Option "); // write in the lcd screen option number
       lcd.print(choiceOptions[i]);
-      delay(10000);
-      userChoice = mutipleChoiceOptions[i];
-      userChoiceIndex = i;
+      lcd.print("  ");
+      lcd.print(mutipleChoiceOptions[i]);
+      int roundedTime = round((fiveSecTimeLimit - (millis() - startTime)) / 1000); //calculate the time left in the round (dividing by 1000 converts the number to seconds
+      lcd.setCursor(14, 1);                                                 //set the cursor in the lower right corner of the screen
+      lcd.print(roundedTime);                                               //print the time left in the time limit
+      tone(buzzerPin, mutipleChoiceOptions[i]); // play the buzzer
+      delay(1000);
+      if (digitalRead(buttonPin) == LOW) // when the button is pressd
+      {
+        userHasNotAnswer = false;  //set the boolean to false
+        tone(buzzerPin, 272, 10);  //emit a short beep when the button is pressed
+        lcd.clear();               // clear screen
+        lcd.print("You Selected"); // print on the screen that You selected Option X
+        lcd.setCursor(0, 1);
+        lcd.print("Option ");
+        lcd.print(choiceOptions[i]);
+        delay(1000);
+        userChoice = mutipleChoiceOptions[i];
+        userChoiceIndex = i;
+      }
     }
+
     if (userHasNotAnswer)
     {
       i = i + 1;
@@ -563,6 +581,8 @@ void runGame()
     }
   }
 
+  
+
   //check To see if user is right
   lcd.clear();
   lcd.print("Results");
@@ -572,7 +592,7 @@ void runGame()
   lcd.print("The note play"); // print on the lcd screen the question : "Which note played at A"
   lcd.setCursor(0, 1);
   lcd.print("at Option ");
-  lcd.print(options[answerNoteIndex]);
+  lcd.print(answerNoteIndex+1);
   lcd.print("= ");
   lcd.print(answerNote);
   delay(3000);
@@ -596,4 +616,29 @@ void runGame()
     lcd.print("You were wrong");
   }
   delay(5000);
+
+}
+
+//This method will run the game for our virtual pet
+void runGame()
+{
+  // took notes from the digital trumpet  circuit
+  //   note  frequency
+  //   c     262 Hz
+  //   d     294 Hz
+  //   e     330 Hz
+  //   f     349 Hz
+  //   g     392 Hz
+  //   a     440 Hz
+  //   b     494 Hz
+  //   C     523 Hz
+
+
+  int noteSequence[sizeOfSequence];  // this array will contain the notes that will be played for each game
+  createNoteSequence(noteSequence,sizeOfSequence); //create note Sequence
+  playNoteSequence(noteSequence,sizeOfSequence);
+  int mutipleChoiceOptions[] = {-1, -1, -1, -1, -1};   // create an array of mutiple choice options
+  int answerNoteIndex = -1;
+  createMutipleChoiceQuestion(noteSequence,sizeOfSequence, mutipleChoiceOptions,answerNoteIndex);
+  displayMutipleChoiceQuestion(noteSequence,sizeOfSequence, mutipleChoiceOptions,answerNoteIndex);    
 }

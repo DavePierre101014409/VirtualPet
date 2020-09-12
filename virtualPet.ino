@@ -302,7 +302,7 @@ void showPetDisplays()
 
   //Display the Pet's age
   lcd.clear();
-  lcd.print("Your pet age is");
+  lcd.print("Pet's age is");
   lcd.setCursor(0, 1);
   lcd.print(pet.getAge());
   lcd.print(" years old");
@@ -310,7 +310,7 @@ void showPetDisplays()
 
   //Dsplay the Pet weight
   lcd.clear();
-  lcd.print("Pet weight is");
+  lcd.print("Pet's weight is");
   lcd.setCursor(0, 1);
   lcd.print(pet.getWeight());
   lcd.print(" pounds");
@@ -381,7 +381,7 @@ void createPet()
     if (Serial.available() > 0)
     {
       image = Serial.readString();
-      Serial.print("Yor pet looks like this "); // print the image
+      Serial.print("Your pet looks like this "); // print the image
       pet.setImage(image);
       Serial.println(image);
       hasNotUserInput = false;
@@ -419,7 +419,7 @@ void createPet()
       pet.setAge(age);
       Serial.print("Yor Pet age is ");
       Serial.print(age);
-      Serial.println(" years");
+      Serial.println(" year old");
       hasNotUserInput = false;
       delay(3000);
     }
